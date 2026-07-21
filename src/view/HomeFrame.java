@@ -36,6 +36,7 @@ public class HomeFrame extends javax.swing.JFrame {
         panelTombol = new javax.swing.JPanel();
         btnKategori = new javax.swing.JButton();
         btnGambar = new javax.swing.JButton();
+        btnUser = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GaleriPintar - Home");
@@ -95,6 +96,11 @@ public class HomeFrame extends javax.swing.JFrame {
         btnGambar.setText("Kelola Gambar");
         btnGambar.addActionListener(this::btnGambarActionPerformed);
 
+        btnUser.setBackground(new java.awt.Color(255, 204, 0));
+        btnUser.setForeground(new java.awt.Color(255, 255, 255));
+        btnUser.setText("Kelola User");
+        btnUser.addActionListener(this::btnUserActionPerformed);
+
         javax.swing.GroupLayout panelTombolLayout = new javax.swing.GroupLayout(panelTombol);
         panelTombol.setLayout(panelTombolLayout);
         panelTombolLayout.setHorizontalGroup(
@@ -102,6 +108,7 @@ public class HomeFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTombolLayout.createSequentialGroup()
                 .addContainerGap(77, Short.MAX_VALUE)
                 .addGroup(panelTombolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(74, 74, 74))
@@ -113,7 +120,9 @@ public class HomeFrame extends javax.swing.JFrame {
                 .addComponent(btnKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         panelUtama.add(panelTombol, java.awt.BorderLayout.CENTER);
@@ -131,7 +140,6 @@ public class HomeFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
 
     private void btnKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKategoriActionPerformed
         CategoryFrame categoryFrame = new CategoryFrame(this);
@@ -144,6 +152,13 @@ public class HomeFrame extends javax.swing.JFrame {
         imageFrame.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnGambarActionPerformed
+
+    private void btnUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserActionPerformed
+        UserFrame userFrame = new UserFrame(this);
+        userFrame.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnUserActionPerformed
+    
 
     /**
      * @param args the command line arguments
@@ -170,6 +185,7 @@ public class HomeFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGambar;
     private javax.swing.JButton btnKategori;
+    private javax.swing.JButton btnUser;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JLabel lblSubjudul;

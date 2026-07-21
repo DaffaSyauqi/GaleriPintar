@@ -88,6 +88,9 @@ public class ImageFrame extends javax.swing.JFrame {
         cmbFilter = new javax.swing.JComboBox<>();
         scrollTable = new javax.swing.JScrollPane();
         tblGambar = new javax.swing.JTable();
+        lblSearch = new javax.swing.JLabel();
+        lblTotalData = new javax.swing.JLabel();
+        txtSearch = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("GaleriPintar - Kelola Gambar");
@@ -231,7 +234,7 @@ public class ImageFrame extends javax.swing.JFrame {
                 .addComponent(panelTombol, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnBack)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         panelKanan.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Table Gambar", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12))); // NOI18N
@@ -260,6 +263,17 @@ public class ImageFrame extends javax.swing.JFrame {
         });
         scrollTable.setViewportView(tblGambar);
 
+        lblSearch.setText("Search :");
+
+        lblTotalData.setText("Total Data : 0");
+
+        txtSearch.addActionListener(this::txtSearchActionPerformed);
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelKananLayout = new javax.swing.GroupLayout(panelKanan);
         panelKanan.setLayout(panelKananLayout);
         panelKananLayout.setHorizontalGroup(
@@ -267,22 +281,33 @@ public class ImageFrame extends javax.swing.JFrame {
             .addGroup(panelKananLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelKananLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelKananLayout.createSequentialGroup()
+                        .addComponent(scrollTable, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(18, Short.MAX_VALUE))
                     .addGroup(panelKananLayout.createSequentialGroup()
                         .addComponent(lblFilter)
-                        .addGap(48, 48, 48)
-                        .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtSearch)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblTotalData)
+                        .addGap(27, 27, 27))))
         );
         panelKananLayout.setVerticalGroup(
             panelKananLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKananLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelKananLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelKananLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblFilter)
                     .addComponent(cmbFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblFilter))
-                .addGap(18, 18, 18)
-                .addComponent(scrollTable)
+                    .addComponent(lblSearch)
+                    .addComponent(lblTotalData)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addComponent(scrollTable, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -529,6 +554,15 @@ public class ImageFrame extends javax.swing.JFrame {
     private void tblGambarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGambarMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tblGambarMouseClicked
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        loadTable(getSelectedFilterCategoryId());
+    }//GEN-LAST:event_txtSearchKeyReleased
+    
     
     private void loadKategoriCombo() {
         cmbKategori.removeAllItems();
@@ -557,12 +591,24 @@ public class ImageFrame extends javax.swing.JFrame {
 
     private void loadTable(int categoryId) {
         try {
-            List<Image> list = (categoryId == 0)
-                    ? imageDAO.findAll()
-                    : imageDAO.findByCategoryId(categoryId);
 
-            DefaultTableModel model = (DefaultTableModel) tblGambar.getModel();
+            String keyword = txtSearch.getText().trim();
+
+            List<Image> list;
+
+            if (keyword.isEmpty()) {
+                list = (categoryId == 0)
+                        ? imageDAO.findAll()
+                        : imageDAO.findByCategoryId(categoryId);
+            } else {
+                list = imageDAO.search(keyword, categoryId);
+            }
+
+            DefaultTableModel model =
+                    (DefaultTableModel) tblGambar.getModel();
+
             model.setRowCount(0);
+
             for (Image img : list) {
                 model.addRow(new Object[]{
                     img.getTitle(),
@@ -572,10 +618,16 @@ public class ImageFrame extends javax.swing.JFrame {
                     img.getCreatedAt()
                 });
             }
+            
+            lblTotalData.setText("Total Data : " + model.getRowCount());
+
         } catch (Exception e) {
+
             JOptionPane.showMessageDialog(this,
                 "Gagal memuat data gambar: " + e.getMessage(),
-                "Error Database", JOptionPane.ERROR_MESSAGE);
+                "Error Database",
+                JOptionPane.ERROR_MESSAGE);
+
         }
     }
 
@@ -691,7 +743,6 @@ public class ImageFrame extends javax.swing.JFrame {
             return false;
         }
 
-        // 🔥 hanya wajib kalau INSERT atau user ganti gambar
         if (selectedId < 0) {
             if (selectedPath == null || selectedPath.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
@@ -725,7 +776,9 @@ public class ImageFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblKategori;
     private javax.swing.JLabel lblPathGambar;
     private javax.swing.JLabel lblPreview;
+    private javax.swing.JLabel lblSearch;
     private javax.swing.JLabel lblTitle;
+    private javax.swing.JLabel lblTotalData;
     private javax.swing.JPanel panelKanan;
     private javax.swing.JPanel panelKiri;
     private javax.swing.JPanel panelMain;
@@ -737,5 +790,6 @@ public class ImageFrame extends javax.swing.JFrame {
     private javax.swing.JTextArea txtDeskripsi;
     private javax.swing.JTextField txtJudul;
     private javax.swing.JTextField txtPath;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

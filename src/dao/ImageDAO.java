@@ -111,4 +111,46 @@ public class ImageDAO {
             return ps.executeUpdate() > 0;
         }
     }
+        
+    public List<Image> search(String keyword, int categoryId) throws SQLException {
+        List<Image> list = new ArrayList<>();
+
+        String sql = "SELECT i.id, i.category_id, c.name AS category_name, "
+                   + "i.title, i.description, i.image_path, i.created_at "
+                   + "FROM images i "
+                   + "JOIN categories c ON i.category_id = c.id "
+                   + "WHERE i.title LIKE ? ";
+
+        if (categoryId > 0) {
+            sql += "AND i.category_id = ? ";
+        }
+
+        sql += "ORDER BY i.created_at DESC";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, "%" + keyword + "%");
+
+            if (categoryId > 0) {
+                ps.setInt(2, categoryId);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Image img = new Image();
+                    img.setId(rs.getInt("id"));
+                    img.setCategoryId(rs.getInt("category_id"));
+                    img.setCategoryName(rs.getString("category_name"));
+                    img.setTitle(rs.getString("title"));
+                    img.setDescription(rs.getString("description"));
+                    img.setImagePath(rs.getString("image_path"));
+                    img.setCreatedAt(rs.getTimestamp("created_at"));
+                    list.add(img);
+                }
+            }
+        }
+
+        return list;
+    }
 }
